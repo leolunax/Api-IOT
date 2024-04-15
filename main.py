@@ -9,13 +9,29 @@ from service.limits_service import get_all_ar_limits
 from service.limits_service import get_all_esp_limits
 from service.sensors_service import get_all_dht_reads
 from service.sensors_service import get_all_bmp_reads
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Set up CORS middleware configuration
+origins = [
+    "http://localhost:3000",  # Allow frontend origin
+    "http://localhost:8000",  # Allow backend own origin for potential future uses
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 Base.metadata.create_all(bind=engine)
 
 @app.get('/')
-async def root():
+async def root():                       
     return "Hola Mundo"
 
 @app.get('/ar/limits/',response_model= list[Ar_limits_response])
